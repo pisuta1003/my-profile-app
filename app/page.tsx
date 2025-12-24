@@ -7,14 +7,16 @@ interface Profile {
   id: string
   username: string
   bio: string
-  band_count: string // 追加
+  band_count: string
+  part: string // 追加
 }
 
 export default function ProfilePage() {
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [username, setUsername] = useState('')
   const [bio, setBio] = useState('')
-  const [bandCount, setBandCount] = useState('') // 追加
+  const [bandCount, setBandCount] = useState('')
+  const [part, setPart] = useState('') // 追加
   const [myId, setMyId] = useState<string>('')
 
   useEffect(() => {
@@ -50,7 +52,8 @@ export default function ProfilePage() {
         id: myId, 
         username, 
         bio, 
-        band_count: bandCount, // 追加
+        band_count: bandCount,
+        part: part, // 追加
         updated_at: new Date() 
       })
     if (error) alert('保存に失敗しました')
@@ -64,7 +67,8 @@ export default function ProfilePage() {
   const startEdit = (profile: Profile) => {
     setUsername(profile.username)
     setBio(profile.bio)
-    setBandCount(profile.band_count || '') // 追加
+    setBandCount(profile.band_count || '')
+    setPart(profile.part || '') // 追加
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -94,7 +98,14 @@ export default function ProfilePage() {
               onChange={(e) => setBandCount(e.target.value)}
               className="w-24 border p-3 rounded-lg border-gray-300 outline-none focus:ring-2 focus:ring-blue-500"
             />
+            
             <span className="font-bold text-gray-700">個</span>
+            <input
+             placeholder="第1希望パート"
+             value={part}
+             onChange={(e) => setPart(e.target.value)}
+             className="flex-1 border p-3 rounded-lg border-gray-300 outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
         {/* ------------------ */}
@@ -126,6 +137,9 @@ export default function ProfilePage() {
                   {/* --- 表示側 --- */}
                   <div className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-bold my-1">
                     組みたい正規バンド数：{profile.band_count || 0} 個
+                  </div>
+                  <div className="text-sm font-bold text-green-600">
+                    第1希望パート:{profile.part || '未設定'}
                   </div>
                   {/* -------------- */}
                 </div>
