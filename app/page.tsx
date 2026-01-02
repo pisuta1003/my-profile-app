@@ -9,7 +9,7 @@ interface Profile {
   band_image: string; line_name: string; other_sns: string; remarks: string;
   band_count: string; kikaku_count: string; current_regular: string;
   current_kikaku: string; part: string; part2: string; part3: string;
-  part4: string; vocal_range: string; gaibu_iyoku: string; 
+  part4: string; vocal_range: string; gaibu_iyoku: string; allergy: string; 
   generation: number; avatar_url: string; deleted_at?: string | null;
 }
 
@@ -55,6 +55,7 @@ export default function ProfilePage() {
   const [part4, setPart4] = useState('未設定'); 
   const [vocalRange, setVocalRange] = useState('');
   const [gaibuIyoku, setGaibuIyoku] = useState('なし'); 
+  const [allergy, setAllergy] = useState('');
   const [generation, setGeneration] = useState<string>('');
   const [avatarUrl, setAvatarUrl] = useState(''); 
   const [uploading, setUploading] = useState(false);
@@ -104,7 +105,7 @@ export default function ProfilePage() {
       id: myId, username, school_info: schoolInfo, favorite_artists: favoriteArtists, band_image: bandImage, 
       line_name: lineName, other_sns: otherSns, remarks, band_count: bandCount, kikaku_count: kikakuCount, 
       current_regular: currentRegular, current_kikaku: currentKikaku, part, part2, part3, part4, 
-      vocal_range: vocalRange, gaibu_iyoku: gaibuIyoku, generation: generation ? parseInt(generation) : null, 
+      vocal_range: vocalRange, gaibu_iyoku: gaibuIyoku, allergy: allergy, generation: generation ? parseInt(generation) : null, 
       avatar_url: avatarUrl, updated_at: new Date(),
       deleted_at: null 
     })
@@ -238,13 +239,13 @@ export default function ProfilePage() {
             
             <div className="space-y-5">
               <div className="grid grid-cols-4 gap-2">
-                <div className="col-span-3"><label className="text-[15px] font-black text-[#B2AE91] ml-2">名前</label><input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl outline-none focus:border-[#A7C957]" /></div>
-                <div className="col-span-1"><label className="text-[15px] font-black text-[#B2AE91] text-center block">期</label><input type="number" value={generation} onChange={(e) => setGeneration(e.target.value)} className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl text-center outline-none focus:border-[#A7C957]" /></div>
+                <div className="col-span-3"><label className="text-[15px] font-black text-[#8C896B] ml-2">名前</label><input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl outline-none focus:border-[#A7C957]" /></div>
+                <div className="col-span-1"><label className="text-[15px] font-black text-[#8C896B] text-center block">期</label><input type="number" value={generation} onChange={(e) => setGeneration(e.target.value)} className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl text-center outline-none focus:border-[#A7C957]" /></div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 p-4 bg-[#F9F7E8] rounded-[2rem] border-2 border-[#EBE8D0]">
-                <div className="space-y-2"><p className="text-[13px] font-black text-[#8C896B] text-center uppercase tracking-wider">希望(正規/企画)</p><div className="flex gap-2"><input type="text" value={bandCount} onChange={(e) => setBandCount(e.target.value)} className="w-full p-2 rounded-xl bg-white text-center border focus:ring-2 ring-[#A7C957]" /><input type="text" value={kikakuCount} onChange={(e) => setKikakuCount(e.target.value)} className="w-full p-2 rounded-xl bg-white text-center border focus:ring-2 ring-[#A7C957]" /></div></div>
-                <div className="space-y-2"><p className="text-[13px] font-black text-[#8C896B] text-center uppercase tracking-wider">現在(正規/企画)</p><div className="flex gap-2"><input type="text" value={currentRegular} onChange={(e) => setCurrentRegular(e.target.value)} className="w-full p-2 rounded-xl bg-white text-center border focus:ring-2 ring-[#A7C957]" /><input type="text" value={currentKikaku} onChange={(e) => setCurrentKikaku(e.target.value)} className="w-full p-2 rounded-xl bg-white text-center border focus:ring-2 ring-[#A7C957]" /></div></div>
+                <div className="space-y-2"><p className="text-[16px] font-black text-[#8C896B] text-center uppercase tracking-wider">希望(正規/企画)</p><div className="flex gap-2"><input type="text" value={bandCount} onChange={(e) => setBandCount(e.target.value)} className="w-full p-2 rounded-xl bg-white text-center border focus:ring-2 ring-[#A7C957]" /><input type="text" value={kikakuCount} onChange={(e) => setKikakuCount(e.target.value)} className="w-full p-2 rounded-xl bg-white text-center border focus:ring-2 ring-[#A7C957]" /></div></div>
+                <div className="space-y-2"><p className="text-[16px] font-black text-[#8C896B] text-center uppercase tracking-wider">現在(正規/企画)</p><div className="flex gap-2"><input type="text" value={currentRegular} onChange={(e) => setCurrentRegular(e.target.value)} className="w-full p-2 rounded-xl bg-white text-center border focus:ring-2 ring-[#A7C957]" /><input type="text" value={currentKikaku} onChange={(e) => setCurrentKikaku(e.target.value)} className="w-full p-2 rounded-xl bg-white text-center border focus:ring-2 ring-[#A7C957]" /></div></div>
               </div>
 
               <div className="p-4 bg-[#FFFFCC] rounded-[2rem] border-2 border-[#EBE8D0] space-y-4">
@@ -252,8 +253,8 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-2 gap-2">
                   {[ {v:part, s:setPart, l:"第1希望"}, {v:part2, s:setPart2, l:"第2希望"}, {v:part3, s:setPart3, l:"第3希望"}, {v:part4, s:setPart4, l:"第4希望"} ].map((p, i) => (
                     <div key={i} className="bg-white p-2 rounded-xl border border-[#DEDABA]">
-                      <span className="text-[12px] font-black block text-[#B2AE91]">{p.l}</span>
-                      <select value={p.v} onChange={(e) => p.s(e.target.value)} className="w-full font-bold bg-transparent outline-none text-sm cursor-pointer">{PART_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}</select>
+                      <span className="text-[16px] font-black block text-[#B2AE91]">{p.l}</span>
+                      <select value={p.v} onChange={(e) => p.s(e.target.value)} className="w-full text-[16px] font-bold bg-transparent outline-none text-sm cursor-pointer">{PART_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}</select>
                     </div>
                   ))}
                 </div>
@@ -264,31 +265,35 @@ export default function ProfilePage() {
                 <div><label className="text-[15px] font-black text-[#8C896B] ml-2">外部意欲</label><select value={gaibuIyoku} onChange={(e) => setGaibuIyoku(e.target.value)} className="w-full p-2 rounded-xl bg-white text-sm font-bold cursor-pointer"><option value="なし">なし</option><option value="あり">あり</option></select></div>
               </div>
 
-              <div className="space-y-4">
-                <input type="text" value={schoolInfo} onChange={(e) => setSchoolInfo(e.target.value)} placeholder="学校 / 学部 / 学科" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" />
-                <input type="text" value={favoriteArtists} onChange={(e) => setFavoriteArtists(e.target.value)} placeholder="好きなアーティスト / 曲" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" />
-                <input type="text" value={bandImage} onChange={(e) => setBandImage(e.target.value)} placeholder="組みたいバンドのイメージ" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" />
-                <div className="grid grid-cols-2 gap-2">
-                  <input type="text" value={lineName} onChange={(e) => setLineName(e.target.value)} placeholder="LINE名" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" />
-                  <input type="text" value={otherSns} onChange={(e) => setOtherSns(e.target.value)} placeholder="その他SNS" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" />
-                </div>
-                <textarea value={remarks} onChange={(e) => setRemarks(e.target.value)} rows={3} placeholder="その他備考" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl text-sm focus:border-[#A7C957] outline-none" />
+              <div className="grid grid-cols-2 gap-3 p-4 bg-[#f5f5f5] rounded-[2rem] border-2 border-[#EBE8D0]">
+                <div><label className="text-[15px] font-black text-[#8C896B] ml-2">アレルギー(任意)</label><input type="text" value={allergy} onChange={(e) => setAllergy(e.target.value)} placeholder="" className="w-full p-2 rounded-xl bg-white text-sm text-center focus:outline-none" /></div>
               </div>
 
-              <button onClick={saveProfile} className="bg-[#F4A261] text-white p-4 rounded-[2rem] font-black w-full shadow-lg hover:bg-[#e89250] transition-colors">プロフィールを保存</button>
+              <div className="space-y-4">
+                <div><label className="text-[15px] font-black text-[#8C896B] ml-2">学校 / 学部 / 学科</label><input type="text" value={schoolInfo} onChange={(e) => setSchoolInfo(e.target.value)} placeholder="" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" /></div>
+                <div><label className="text-[15px] font-black text-[#8C896B] ml-2">好きなアーティスト / 曲</label><input type="text" value={favoriteArtists} onChange={(e) => setFavoriteArtists(e.target.value)} placeholder="" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" /></div>
+                <div><label className="text-[15px] font-black text-[#8C896B] ml-2">組みたいバンドのイメージ</label><input type="text" value={bandImage} onChange={(e) => setBandImage(e.target.value)} placeholder="" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" /></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div><label className="text-[15px] font-black text-[#8C896B] ml-2">LINE名</label><input type="text" value={lineName} onChange={(e) => setLineName(e.target.value)} placeholder="" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" /></div>
+                  <div><label className="text-[15px] font-black text-[#8C896B] ml-2">その他SNS</label><input type="text" value={otherSns} onChange={(e) => setOtherSns(e.target.value)} placeholder="" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" /></div>
+                </div>
+                <div><label className="text-[15px] font-black text-[#8C896B] ml-2">その他備考</label><textarea value={remarks} onChange={(e) => setRemarks(e.target.value)} rows={3} placeholder="" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl text-sm focus:border-[#A7C957] outline-none" /></div>
+              </div>
+
+              <button onClick={saveProfile} className="bg-[#F4A261] text-[25px] text-white p-4 rounded-[2rem] font-black w-full shadow-lg hover:bg-[#e89250] transition-colors">プロフィールを保存！</button>
             </div>
           </div>
 
           {/* 絞り込み検索エリア */}
           <div className="bg-[#F2EFD5] p-5 rounded-[2rem] border-2 border-[#E5E2C5] shadow-inner space-y-4">
-            <h3 className="font-black text-[#8C896B] text-center text-sm uppercase tracking-widest">部員を探す</h3>
+            <h3 className="font-black text-[18px] text-[#8C896B] text-center text-sm uppercase tracking-widest">メンバー検索</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white p-2 rounded-2xl border border-[#DEDABA]">
-                <label className="text-[11px] font-black block text-[#B2AE91] ml-2">期で絞り込む</label>
-                <input type="number" placeholder="全期" value={searchGen} onChange={(e) => setSearchGen(e.target.value)} className="w-full font-bold bg-transparent outline-none text-center" />
+                <label className="text-[15px] font-black block text-[#B2AE91] ml-2">期で検索</label>
+                <input type="number" placeholder="半角数字" value={searchGen} onChange={(e) => setSearchGen(e.target.value)} className="w-full font-bold bg-transparent outline-none text-center" />
               </div>
               <div className="bg-white p-2 rounded-2xl border border-[#DEDABA]">
-                <label className="text-[11px] font-black block text-[#B2AE91] ml-2">パートで絞り込む</label>
+                <label className="text-[14px] font-black block text-[#B2AE91] ml-2">パートで検索</label>
                 <select value={searchPart} onChange={(e) => setSearchPart(e.target.value)} className="w-full font-bold bg-transparent outline-none cursor-pointer">
                   <option value="全パート">全パート</option>
                   {PART_OPTIONS.filter(o => o !== "未設定").map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -342,6 +347,7 @@ export default function ProfilePage() {
                 <div className="flex gap-2 flex-wrap">
                   <div className="bg-[#E6E6FA] px-3 py-1 rounded-full text-[15px] font-black text-[#8C896B]">音域: {p.vocal_range || '未入力'}</div>
                   <div className={`px-3 py-1 rounded-full text-[15px] font-black ${p.gaibu_iyoku === 'あり' ? 'bg-[#FF9999]/20 text-[#FF6666]' : 'bg-[#F2F0E4] text-[#8C896B]'}`}>外部意欲: {p.gaibu_iyoku}</div>
+                  <div className="bg-[#ffebcd] px-3 py-1 rounded-full text-[15px] font-black text-[#8C896B]">アレルギー: {p.allergy || '未入力'}</div>
                 </div>
 
                 <div className="space-y-3">
