@@ -129,10 +129,30 @@ export default function ProfilePage() {
     }
   }, [myId])
 
-  const fetchPosts = useCallback(async () => {
-    const { data } = await supabase.from('band_posts').select('*, profiles(username, avatar_url), post_likes(profile_id), post_comments(*, profiles(username))').order('created_at', { ascending: false });
-    if (data) setPosts(data as any)
-  }, [])
+const fetchPosts = useCallback(async () => {
+  // .select() の中身をシンプルにして、まずはデータが取れるか確認
+  const { data, error } = await supabase
+    .from('band_posts')
+    .select(`
+      *,
+      profiles (username, avatar_url),
+      post_likes (profile_id),
+      post_comments (*, profiles(username))
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("掲示板取得エラー:", error.message);
+    return;
+  }
+
+  console.log("取得できた投稿数:", data?.length);
+  console.log("投稿データの中身:", data);
+
+  if (data) {
+    setPosts(data as any);
+  }
+}, []);
 
   // 自動ログインチェック & データ読み込み
   useEffect(() => {
@@ -232,16 +252,22 @@ export default function ProfilePage() {
 
   const savePost = async () => {
     if (!theme || !targetParts) return alert('テーマと募集パートを入力してください')
-    const postData = {
+    const postData: any = {
       profile_id: myId, post_type: postType, theme, members, target_parts: targetParts,
       start_period: startPeriod, extra_remarks: extraRemarks, title: theme
     }
-    if (editingPostId) {
-      await supabase.from('band_posts').update(postData).eq('id', editingPostId)
-      setEditingPostId(null)
-    } else {
-      await supabase.from('band_posts').insert(postData)
+if (editingPostId) {
+    // 編集時は「どの投稿か」を指定するために ID を使う
+    await supabase.from('band_posts').update(postData).eq('id', editingPostId)
+    setEditingPostId(null)
+  } else {
+    // 【重要】新規投稿時は ID を含めない（Supabaseに自動生成させる）
+    const { error } = await supabase.from('band_posts').insert(postData)
+    if (error) {
+      console.error("投稿エラー詳細:", error);
+      return alert("エラー: " + error.message);
     }
+  }
     setTheme(''); setMembers(''); setTargetParts(''); setStartPeriod(''); setExtraRemarks('');
     fetchPosts(); alert(editingPostId ? '更新しました！' : '投稿しました！');
   }
@@ -260,16 +286,53 @@ export default function ProfilePage() {
   }
 
   const handleLike = async (postId: string, hasLiked: boolean) => {
-    if (hasLiked) await supabase.from('post_likes').delete().eq('post_id', postId).eq('profile_id', myId)
-    else await supabase.from('post_likes').insert({ post_id: postId, profile_id: myId })
-    fetchPosts()
+  if (!myId) return alert('ログインが必要です');
+
+  if (hasLiked) {
+    // 削除：自分のIDと投稿IDが一致するものだけを消す
+    await supabase
+      .from('post_likes')
+      .delete()
+      .match({ post_id: postId, profile_id: myId });
+  } else {
+    // 追加：念のため一回消してから入れる（409回避の裏技）
+    await supabase
+      .from('post_likes')
+      .delete()
+      .match({ post_id: postId, profile_id: myId });
+      
+    const { error } = await supabase
+      .from('post_likes')
+      .insert({ post_id: postId, profile_id: myId });
+
+    if (error && error.code !== '23505') { // 重複エラー以外ならアラート
+      console.error("追加エラー:", error.message);
+    }
   }
+  
+  fetchPosts(); // 画面を更新
+};
 
   const handleComment = async (postId: string) => {
-    const content = commentInput[postId]; if (!content) return
-    await supabase.from('post_comments').insert({ post_id: postId, profile_id: myId, content })
-    setCommentInput({ ...commentInput, [postId]: '' }); fetchPosts();
+  const content = commentInput[postId];
+  if (!content || !myId) return;
+
+  const { error } = await supabase
+    .from('post_comments')
+    .insert({
+      post_id: postId,
+      profile_id: myId,
+      content: content
+    });
+
+  if (error) {
+    console.error("コメント送信エラー:", error.message);
+    return alert('送信に失敗しました');
   }
+
+  setCommentInput({ ...commentInput, [postId]: '' });
+  fetchPosts(); // 再読み込み
+};
 
   // --- 表示用フィルタリング ---
   const filteredProfiles = profiles.filter(p => {
@@ -517,7 +580,11 @@ export default function ProfilePage() {
 
               <div className="space-y-8">
                 {posts.map((post) => {
-                  const hasLiked = post.post_likes?.some(l => l.profile_id === myId);
+                  // posts.map((post) => { ... のすぐ下
+const hasLiked = post.post_likes?.some(
+  (like: any) => String(like.profile_id) === String(myId)
+) ?? false; 
+                 post.post_likes.some(like => like.profile_id === myId);
                   const isOwner = post.profile_id === myId;
                   const typeColor = post.post_type === '企画' ? 'bg-[#A7C957]' : post.post_type === '考え中' ? 'bg-[#B2AE91]' : 'bg-[#F4A261]';
                   return (
