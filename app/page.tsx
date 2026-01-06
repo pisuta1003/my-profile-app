@@ -9,7 +9,7 @@ interface Profile {
   band_image: string; line_name: string; other_sns: string; remarks: string;
   band_count: string; kikaku_count: string; current_regular: string;
   current_kikaku: string; part: string; part2: string; part3: string;
-  part4: string; vocal_range: string; gaibu_iyoku: string; allergy: string; 
+  part4: string; vocal_range: string; gaibu_iyoku: string; allergy: string; my_band: string; 
   generation: number; avatar_url: string; deleted_at?: string | null;
    // 経験年数なども追加があればここに定義
 }
@@ -48,6 +48,7 @@ export default function ProfilePage() {
   // プロフィール編集用ステート
   const [username, setUsername] = useState(''); 
   const [schoolInfo, setSchoolInfo] = useState('');
+  const [my_band, setMy_band] = useState('');
   const [favoriteArtists, setFavoriteArtists] = useState(''); 
   const [bandImage, setBandImage] = useState('');
   const [lineName, setLineName] = useState(''); 
@@ -181,7 +182,8 @@ const fetchPosts = useCallback(async () => {
     const updateData = { 
       id: myId, // 重要：ログイン中のIDを使用
       username, 
-      school_info: schoolInfo, 
+      school_info: schoolInfo,
+      my_band: my_band, 
       favorite_artists: favoriteArtists, 
       band_image: bandImage, 
       line_name: lineName, 
@@ -228,7 +230,7 @@ const fetchPosts = useCallback(async () => {
     // 自分のプロフィールでない場合は編集させないガード（念のため）
     if (p.id !== myId) return alert("自分以外のプロフィールは編集できません");
 
-    setUsername(p.username); setSchoolInfo(p.school_info || '');
+    setUsername(p.username); setSchoolInfo(p.school_info || ''); setMy_band(p.my_band || '');
     setFavoriteArtists(p.favorite_artists || ''); setBandImage(p.band_image || '');
     setLineName(p.line_name || ''); setOtherSns(p.other_sns || ''); setRemarks(p.remarks || '');
     setBandCount(p.band_count || ''); setKikakuCount(p.kikaku_count || '');
@@ -425,7 +427,7 @@ if (editingPostId) {
                 <div className="space-y-5">
                   <div className="grid grid-cols-4 gap-2">
                     <div className="col-span-3"><label className="text-[15px] font-black text-[#8C896B] ml-2">名前</label><input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl outline-none focus:border-[#A7C957]" /></div>
-                    <div className="col-span-1"><label className="text-[15px] font-black text-[#8C896B] text-center block">期</label><input type="number" value={generation} onChange={(e) => setGeneration(e.target.value)} className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl text-center outline-none focus:border-[#A7C957]" /></div>
+                    <div className="col-span-1"><label className="text-[15px] font-black text-[#8C896B] block">期</label><input type="number" value={generation} onChange={(e) => setGeneration(e.target.value)} className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl text-center outline-none focus:border-[#A7C957]" /></div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 p-4 bg-[#F9F7E8] rounded-[2rem] border-2 border-[#EBE8D0]">
@@ -456,6 +458,7 @@ if (editingPostId) {
 
                   <div className="space-y-4">
                     <div><label className="text-[15px] font-black text-[#8C896B] ml-2">学校 / 学部 / 学科</label><input type="text" value={schoolInfo} onChange={(e) => setSchoolInfo(e.target.value)} placeholder="" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" /></div>
+                    <div><label className="text-[15px] font-black text-[#8C896B] ml-2">所属バンド</label><input type="text" value={my_band} onChange={(e) => setMy_band(e.target.value)} placeholder="" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" /></div>
                     <div><label className="text-[15px] font-black text-[#8C896B] ml-2">好きなアーティスト / 曲</label><input type="text" value={favoriteArtists} onChange={(e) => setFavoriteArtists(e.target.value)} placeholder="" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" /></div>
                     <div><label className="text-[15px] font-black text-[#8C896B] ml-2">組みたいバンドのイメージ</label><input type="text" value={bandImage} onChange={(e) => setBandImage(e.target.value)} placeholder="" className="w-full border-2 border-[#F2F0E4] p-3 rounded-2xl focus:border-[#A7C957] outline-none" /></div>
                     <div className="grid grid-cols-2 gap-2">
@@ -536,6 +539,7 @@ if (editingPostId) {
                     </div>
 
                     <div className="space-y-3">
+                      {p.my_band && <div className="bg-[#FFF] p-3.5 rounded-2xl border-2 border-[#F2EFD5]"><span className="font-black text-[16px] text-[#B2AE91] block mb-1 tracking-widest uppercase">所属バンド</span><p className="text-[18px] font-bold text-[#5C5A40] whitespace-pre-wrap">{p.my_band}</p></div>}
                       {p.favorite_artists && <div className="bg-[#FFF] p-3.5 rounded-2xl border-2 border-[#F2EFD5]"><span className="font-black text-[16px] text-[#B2AE91] block mb-1 tracking-widest uppercase">好きなアーティスト/曲</span><p className="text-[18px] font-bold text-[#5C5A40] whitespace-pre-wrap">{p.favorite_artists}</p></div>}
                       {p.band_image && <div className="bg-[#FFF] p-3.5 rounded-2xl border-2 border-[#F2EFD5]"><span className="font-black text-[16px] text-[#B2AE91] block mb-1 tracking-widest uppercase">組みたいイメージ</span><p className="text-[18px] font-bold text-[#5C5A40] whitespace-pre-wrap">{p.band_image}</p></div>}
                       {p.remarks && <div className="bg-[#FAF9F0] p-3.5 rounded-2xl border-2 border-[#EBE8D0]"><span className="font-black text-[16px] text-[#8C896B] block mb-1 tracking-widest uppercase">備考</span><p className="text-[18px] font-bold text-[#5C5A40] whitespace-pre-wrap">{p.remarks}</p></div>}
@@ -605,8 +609,8 @@ const hasLiked = post.post_likes?.some(
                             <button onClick={() => handleLike(post.id, !!hasLiked)} className={`px-4 py-2 rounded-full text-[18px] font-black transition-all ${hasLiked ? 'bg-[#FF9999] text-white' : 'bg-[#FAF9F0] text-[#B2AE91] border hover:bg-white'}`}>❤ {post.post_likes?.length || 0}</button>
                             {isOwner && (
                                 <div className="flex gap-1">
-                                    <button onClick={() => startEditPost(post)} className="text-[18px] font-black bg-[#A7C957] text-[white] px-2 py-1 rounded-md border hover:bg-[#96b54e]">編集</button>
-                                    <button onClick={() => deletePost(post.id)} className="text-[18px] font-black bg-[#FFFF66] text-[#FF5192] px-2 py-1 rounded-md border border-[#FF9999]/30 hover:bg-[#f2f25a]">削除</button>
+                                    <button onClick={() => startEditPost(post)} className="text-[16px] font-black bg-[#A7C957] text-[white] px-2 py-1 rounded-md border hover:bg-[#96b54e]">編集</button>
+                                    <button onClick={() => deletePost(post.id)} className="text-[16px] font-black bg-[#FFFF66] text-[#FF5192] px-2 py-1 rounded-md border border-[#FF9999]/30 hover:bg-[#f2f25a]">削除</button>
                                 </div>
                             )}
                         </div>
