@@ -9,7 +9,7 @@ interface Profile {
   band_image: string; line_name: string; other_sns: string; remarks: string;
   band_count: string; kikaku_count: string; current_regular: string;
   current_kikaku: string; part: string; part2: string; part3: string;
-  part4: string; vocal_range: string; gaibu_iyoku: string; allergy: string; my_band: string; 
+  part4: string; vocal_range: string; gaibu_iyoku: string; allergy: string; birthday: string; my_band: string; 
   generation: number; avatar_url: string; deleted_at?: string | null;
    // 経験年数なども追加があればここに定義
 }
@@ -65,6 +65,7 @@ export default function ProfilePage() {
   const [vocalRange, setVocalRange] = useState('');
   const [gaibuIyoku, setGaibuIyoku] = useState('なし'); 
   const [allergy, setAllergy] = useState('');
+  const [birthday, setBirthday] = useState('');
   const [generation, setGeneration] = useState<string>('');
   const [avatarUrl, setAvatarUrl] = useState(''); 
   const [uploading, setUploading] = useState(false);
@@ -197,6 +198,7 @@ const fetchPosts = useCallback(async () => {
       vocal_range: vocalRange, 
       gaibu_iyoku: gaibuIyoku, 
       allergy: allergy, 
+      birthday: birthday,
       generation: generation ? parseInt(generation) : null, 
       avatar_url: avatarUrl, 
       updated_at: new Date(),
@@ -238,7 +240,7 @@ const fetchPosts = useCallback(async () => {
     setPart(p.part || '未設定'); setPart2(p.part2 || '未設定'); setPart3(p.part3 || '未設定'); setPart4(p.part4 || '未設定');
     setVocalRange(p.vocal_range || ''); setGaibuIyoku(p.gaibu_iyoku || 'なし');
     setGeneration(p.generation?.toString() || ''); setAvatarUrl(p.avatar_url || '');
-    setAllergy(p.allergy || '');
+    setAllergy(p.allergy || ''); setBirthday(p.birthday || '');
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -453,6 +455,7 @@ if (editingPostId) {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 p-4 bg-[#f5f5f5] rounded-[2rem] border-2 border-[#EBE8D0]">
+                    <div><label className="text-[15px] font-black text-[#8C896B] ml-2">誕生日</label><input type="text" value={birthday} onChange={(e) => setBirthday(e.target.value)} placeholder="" className="w-full p-2 rounded-xl bg-white text-sm text-center focus:outline-none" /></div>
                     <div><label className="text-[15px] font-black text-[#8C896B] ml-2">アレルギー(任意)</label><input type="text" value={allergy} onChange={(e) => setAllergy(e.target.value)} placeholder="" className="w-full p-2 rounded-xl bg-white text-sm text-center focus:outline-none" /></div>
                   </div>
 
@@ -535,7 +538,8 @@ if (editingPostId) {
                     <div className="flex gap-2 flex-wrap">
                       <div className="bg-[#E6E6FA] px-3 py-1 rounded-full text-[15px] font-black text-[#8C896B]">音域: {p.vocal_range || '未入力'}</div>
                       <div className={`px-3 py-1 rounded-full text-[15px] font-black ${p.gaibu_iyoku === 'あり' ? 'bg-[#FF9999]/20 text-[#FF6666]' : 'bg-[#F2F0E4] text-[#8C896B]'}`}>外部意欲: {p.gaibu_iyoku}</div>
-                      <div className="bg-[#ffebcd] px-3 py-1 rounded-full text-[15px] font-black text-[#8C896B]">アレルギー: {p.allergy || '未入力'}</div>
+                      <div className="bg-[#ffebcd] px-3 py-1 rounded-full text-[15px] font-black text-[#8C896B]">誕生日: {p.birthday || '未入力'}</div>
+                      <div className="bg-[#F0F0F0] px-3 py-1 rounded-full text-[15px] font-black text-[#8C896B]">アレルギー: {p.allergy || '未入力'}</div>
                     </div>
 
                     <div className="space-y-3">
